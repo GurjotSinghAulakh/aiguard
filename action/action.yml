@@ -29,7 +29,7 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: Install AIGuard
-      run: pip install aiguard
+      run: pip install ai-guard-cli
       shell: bash
 
     - name: Run AIGuard scan
