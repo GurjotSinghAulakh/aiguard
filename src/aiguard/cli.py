@@ -56,11 +56,32 @@ def cli():
     default=False,
     help="Only output the score (for CI).",
 )
+@click.option(
+    "--diff",
+    "diff_target",
+    type=str,
+    default=None,
+    help="Only scan changed lines vs a git ref (e.g. HEAD, main, HEAD~3).",
+)
+@click.option(
+    "--staged",
+    is_flag=True,
+    default=False,
+    help="Only scan staged changes (for pre-commit hooks).",
+)
 def scan(path: str, output_format: str, config_path: str | None,
-         fail_under: int | None, output: str | None, quiet: bool):
+         fail_under: int | None, output: str | None, quiet: bool,
+         diff_target: str | None, staged: bool):
     """Scan files for AI-generated code quality issues.
 
     PATH can be a file or directory (default: current directory).
+
+    \b
+    Examples:
+      aiguard scan ./src                    # Scan everything
+      aiguard scan --diff HEAD              # Only new issues since last commit
+      aiguard scan --diff main              # Only new issues vs main branch
+      aiguard scan --staged                 # Only staged changes (pre-commit)
     """
     # Load config
     config = Config.load(config_path)
@@ -71,7 +92,7 @@ def scan(path: str, output_format: str, config_path: str | None,
 
     # Run scan
     scanner = Scanner(config)
-    report = scanner.scan(path)
+    report = scanner.scan(path, diff_target=diff_target, diff_staged=staged)
 
     if quiet:
         click.echo(report.score)

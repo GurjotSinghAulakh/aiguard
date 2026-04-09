@@ -1,0 +1,9 @@
+- id: aiguard
+  name: AIGuard — AI Code Quality Guard
+  description: Detect common failure patterns in AI-generated code
+  entry: aiguard scan
+  language: python
+  types: [python]
+  args: ["--fail-under", "60"]
+  require_serial: true
+  additional_dependencies: []

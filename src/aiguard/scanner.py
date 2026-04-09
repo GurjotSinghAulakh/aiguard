@@ -57,15 +57,39 @@ class Scanner:
             "gitignore", self.config.ignore_patterns
         )
 
-    def scan(self, target: str) -> ScanReport:
+    def scan(
+        self,
+        target: str,
+        diff_target: str | None = None,
+        diff_staged: bool = False,
+    ) -> ScanReport:
         """Scan a file or directory and return a full report.
 
         Args:
             target: Path to a file or directory to scan.
+            diff_target: If set, only report findings in lines changed
+                since this git ref (e.g. "HEAD", "main", "HEAD~3").
+            diff_staged: If True, only scan staged changes (for pre-commit).
 
         Returns:
             ScanReport with findings, scores, and breakdowns.
         """
+        # If diff mode, get changed regions first
+        changed_regions = None
+        if diff_target or diff_staged:
+            from aiguard.diff import get_changed_files_and_lines, get_staged_files
+
+            if diff_staged:
+                changed_regions = get_staged_files()
+            else:
+                changed_regions = get_changed_files_and_lines(
+                    diff_target=diff_target or "HEAD"
+                )
+
+            if not changed_regions:
+                logger.info("No changed files found in diff.")
+                return ScanReport()
+
         target_path = Path(target).resolve()
 
         if target_path.is_file():
@@ -76,6 +100,11 @@ class Scanner:
             logger.warning(f"Target not found: {target}")
             return ScanReport()
 
+        # In diff mode, only scan files that changed
+        if changed_regions is not None:
+            changed_file_set = set(changed_regions.keys())
+            files = [f for f in files if str(f.resolve()) in changed_file_set]
+
         file_reports: list[FileReport] = []
         all_findings: list[Finding] = []
         total_lines = 0
@@ -83,6 +112,14 @@ class Scanner:
         for file_path in files:
             report = self._scan_file(file_path)
             if report:
+                # In diff mode, filter findings to only changed lines
+                if changed_regions is not None:
+                    from aiguard.diff import filter_findings_to_diff
+
+                    report.findings = filter_findings_to_diff(
+                        report.findings, changed_regions
+                    )
+
                 file_reports.append(report)
                 all_findings.extend(report.findings)
                 total_lines += report.lines_scanned

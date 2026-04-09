@@ -47,6 +47,15 @@ aiguard scan ./src
 # Scan a single file
 aiguard scan app.py
 
+# Only scan changed lines (vs last commit)
+aiguard scan --diff HEAD
+
+# Only scan changed lines (vs main branch)
+aiguard scan --diff main
+
+# Only scan staged files (for pre-commit hooks)
+aiguard scan --staged
+
 # JSON output for CI pipelines
 aiguard scan ./src --format json
 
@@ -111,6 +120,46 @@ score:
     warning: 3
     info: 1
 ```
+
+## Pre-commit Hook
+
+Add AIGuard to your pre-commit config so it runs on every commit:
+
+```yaml
+# .pre-commit-config.yaml
+repos:
+  - repo: https://github.com/GurjotSinghAulakh/aiguard
+    rev: v0.3.0
+    hooks:
+      - id: aiguard
+        args: ["--fail-under", "60"]
+```
+
+Then install:
+
+```bash
+pip install pre-commit
+pre-commit install
+```
+
+Now AIGuard runs automatically on every `git commit`, scanning only the files you changed.
+
+## Diff Mode (Only Scan New Code)
+
+The killer feature for existing projects — only flag issues in **new or changed code**, not the entire codebase:
+
+```bash
+# Issues introduced since last commit
+aiguard scan --diff HEAD
+
+# Issues introduced vs main branch (perfect for PR checks)
+aiguard scan --diff main
+
+# Issues in staged files only (same as pre-commit)
+aiguard scan --staged
+```
+
+This means you can adopt AIGuard on any codebase without drowning in existing issues.
 
 ## GitHub Actions
 
