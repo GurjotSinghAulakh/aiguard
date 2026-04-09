@@ -12,7 +12,7 @@ If you discover a security vulnerability in AIGuard, please report it responsibl
 
 **Do NOT open a public GitHub issue for security vulnerabilities.**
 
-Instead, please email: **security@aiguard.dev**
+Instead, please email: **gs@aulakh.no**
 
 ### What to include
 
