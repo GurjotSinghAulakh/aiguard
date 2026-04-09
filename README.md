@@ -2,7 +2,7 @@
 
 **AI Code Quality Guard — catch the bugs AI leaves behind.**
 
-[![CI](https://github.com/aiguard/aiguard/actions/workflows/ci.yml/badge.svg)](https://github.com/aiguard/aiguard/actions/workflows/ci.yml)
+[![CI](https://github.com/GurjotSinghAulakh/aiguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GurjotSinghAulakh/aiguard/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/aiguard)](https://pypi.org/project/aiguard/)
 [![Python](https://img.shields.io/pypi/pyversions/aiguard)](https://pypi.org/project/aiguard/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: aiguard/aiguard@v1
+      - uses: GurjotSinghAulakh/aiguard@v1
         with:
           path: './src'
           fail-under: '70'
@@ -182,7 +182,7 @@ AIGuard catches these patterns because they are **specific to how AI generates c
 
 We welcome contributions! See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-Good first issues are labeled [`good first issue`](https://github.com/aiguard/aiguard/labels/good%20first%20issue).
+Good first issues are labeled [`good first issue`](https://github.com/GurjotSinghAulakh/aiguard/labels/good%20first%20issue).
 
 ## License
 

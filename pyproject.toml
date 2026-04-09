@@ -41,9 +41,9 @@ aiguard = "aiguard.cli:cli"
 # Built-in detectors register via the @register decorator.
 
 [project.urls]
-Homepage = "https://github.com/aiguard/aiguard"
-Repository = "https://github.com/aiguard/aiguard"
-Issues = "https://github.com/aiguard/aiguard/issues"
+Homepage = "https://github.com/GurjotSinghAulakh/aiguard"
+Repository = "https://github.com/GurjotSinghAulakh/aiguard"
+Issues = "https://github.com/GurjotSinghAulakh/aiguard/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/aiguard"]

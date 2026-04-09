@@ -101,7 +101,7 @@ class SarifFormatter(BaseFormatter):
                     "tool": {
                         "driver": {
                             "name": "AIGuard",
-                            "informationUri": "https://github.com/aiguard/aiguard",
+                            "informationUri": "https://github.com/GurjotSinghAulakh/aiguard",
                             "version": "0.1.0",
                             "rules": list(rules_map.values()),
                         }

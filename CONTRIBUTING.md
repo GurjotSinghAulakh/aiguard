@@ -13,7 +13,7 @@ Thank you for your interest in contributing to AIGuard! This guide will help you
 
 ```bash
 # Clone the repository
-git clone https://github.com/aiguard/aiguard.git
+git clone https://github.com/GurjotSinghAulakh/aiguard.git
 cd aiguard
 
 # Create a virtual environment

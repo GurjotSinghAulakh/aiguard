@@ -137,7 +137,7 @@ class Config:
     def generate_default_yaml(self) -> str:
         """Generate a default .aiguard.yml content."""
         return """# AIGuard Configuration
-# Documentation: https://github.com/aiguard/aiguard
+# Documentation: https://github.com/GurjotSinghAulakh/aiguard
 
 # Rules configuration
 # Each rule can be enabled/disabled and configured individually
