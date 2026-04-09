@@ -1,0 +1,59 @@
+name: 'AIGuard - AI Code Quality Guard'
+description: 'Scan for AI-generated code quality issues and report findings in GitHub Code Scanning'
+author: 'AIGuard Contributors'
+
+branding:
+  icon: 'shield'
+  color: 'blue'
+
+inputs:
+  path:
+    description: 'Path to scan (file or directory)'
+    default: '.'
+  config:
+    description: 'Path to .aiguard.yml config file'
+    required: false
+  fail-under:
+    description: 'Minimum score to pass (0-100). Exits non-zero if below.'
+    default: '60'
+  python-version:
+    description: 'Python version to use'
+    default: '3.11'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Install AIGuard
+      run: pip install aiguard
+      shell: bash
+
+    - name: Run AIGuard scan
+      run: |
+        aiguard scan "${{ inputs.path }}" \
+          --format sarif \
+          --output aiguard-results.sarif \
+          --fail-under "${{ inputs.fail-under }}" \
+          ${{ inputs.config && format('--config {0}', inputs.config) || '' }}
+      shell: bash
+      continue-on-error: true
+
+    - name: Upload SARIF to GitHub Code Scanning
+      uses: github/codeql-action/upload-sarif@v3
+      with:
+        sarif_file: aiguard-results.sarif
+      if: always()
+
+    - name: Check score threshold
+      run: |
+        SCORE=$(aiguard scan "${{ inputs.path }}" --quiet ${{ inputs.config && format('--config {0}', inputs.config) || '' }})
+        echo "AIGuard Score: $SCORE/100"
+        if [ "$SCORE" -lt "${{ inputs.fail-under }}" ]; then
+          echo "::error::AIGuard score $SCORE is below threshold ${{ inputs.fail-under }}"
+          exit 1
+        fi
+      shell: bash

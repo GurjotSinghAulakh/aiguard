@@ -1,0 +1,20 @@
+# AIGuard Configuration (dogfooding — we scan ourselves!)
+
+rules:
+  AIG004:
+    enabled: false  # Skip hallucinated imports for our own package
+  AIG006:
+    enabled: true
+    severity: info  # Relaxed for internal code
+
+ignore:
+  - "tests/fixtures/**"
+  - "**/__pycache__/**"
+  - "**/node_modules/**"
+
+score:
+  fail_threshold: 70
+  weights:
+    error: 10
+    warning: 3
+    info: 1

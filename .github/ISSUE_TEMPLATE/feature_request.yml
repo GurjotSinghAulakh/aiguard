@@ -1,0 +1,54 @@
+name: Feature Request
+description: Suggest a new feature or detector rule
+title: "[Feature]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Have an idea for AIGuard? We'd love to hear it!
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What problem does this feature solve?
+      placeholder: "I'm frustrated when AI-generated code..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed solution
+      description: Describe what you'd like to happen.
+    validations:
+      required: true
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: Code example
+      description: If proposing a new detector, show example code it should catch.
+      render: python
+
+  - type: dropdown
+    id: type
+    attributes:
+      label: Type
+      options:
+        - New detector rule
+        - New output format
+        - New language support
+        - CLI improvement
+        - Configuration option
+        - Other
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribution
+    attributes:
+      label: Willingness to contribute
+      options:
+        - label: I'm willing to submit a PR for this feature

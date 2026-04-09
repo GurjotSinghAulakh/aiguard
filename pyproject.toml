@@ -1,0 +1,59 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "aiguard"
+version = "0.1.0"
+description = "AI Code Quality Guard — detect common failure patterns in AI-generated code"
+readme = "README.md"
+license = "MIT"
+requires-python = ">=3.9"
+authors = [{ name = "AIGuard Contributors" }]
+keywords = ["ai", "code-quality", "linter", "static-analysis", "ai-generated-code"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Testing",
+]
+dependencies = [
+    "click>=8.0",
+    "rich>=13.0",
+    "pyyaml>=6.0",
+    "pathspec>=0.11",
+]
+
+[project.optional-dependencies]
+js = ["tree-sitter>=0.21", "tree-sitter-javascript>=0.21"]
+dev = ["pytest>=7.0", "pytest-cov", "ruff"]
+
+[project.scripts]
+aiguard = "aiguard.cli:cli"
+
+[project.entry-points."aiguard.detectors"]
+# This group is for third-party plugins.
+# Built-in detectors register via the @register decorator.
+
+[project.urls]
+Homepage = "https://github.com/aiguard/aiguard"
+Repository = "https://github.com/aiguard/aiguard"
+Issues = "https://github.com/aiguard/aiguard/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/aiguard"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
