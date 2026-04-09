@@ -6,6 +6,7 @@
 [![PyPI](https://img.shields.io/pypi/v/aiguard)](https://pypi.org/project/aiguard/)
 [![Python](https://img.shields.io/pypi/pyversions/aiguard)](https://pypi.org/project/aiguard/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Release](https://img.shields.io/github/v/release/GurjotSinghAulakh/aiguard)
 
 AI-generated code is **"almost right"** - it compiles, passes linting, follows conventions... but has subtle bugs that are harder to find than writing it yourself. **66% of developers** say this is their #1 frustration with AI coding tools.
 
