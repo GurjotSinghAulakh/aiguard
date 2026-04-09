@@ -1,0 +1,15 @@
+# Default owner for the whole repository
+* @GurjotSinghAulakh
+
+# GitHub workflows and repo automation
+.github/ @GurjotSinghAulakh
+
+# Python package source
+src/ @GurjotSinghAulakh
+
+# Tests
+tests/ @GurjotSinghAulakh
+
+# Core project config
+pyproject.toml @GurjotSinghAulakh
+requirements*.txt @GurjotSinghAulakh
