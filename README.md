@@ -29,10 +29,15 @@ src/utils/helpers.py
   └────────────────────────────────────────────────────────────┘
 ```
 
+### Installation / Package Name
+
+- **PyPI package:** `ai-guard-cli`
+- **CLI command:** `aiguard`
+  
 ## Quick Start
 
 ```bash
-pip install aiguard
+pip install ai-guard-cli
 ```
 
 ```bash
