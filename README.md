@@ -12,6 +12,10 @@ AI-generated code is **"almost right"** - it compiles, passes linting, follows c
 
 AIGuard is a static analysis tool that catches the **specific patterns where AI-generated code goes wrong**: shallow error handling, hallucinated imports, copy-paste duplication, missing validation, placeholder code disguised as complete, and more.
 
+<p align="center">
+  <img src="demo.gif" alt="AIGuard demo" width="800">
+</p>
+
 ```
 $ aiguard scan ./src
 
