@@ -1,7 +1,9 @@
 """Tests for AIG010: Generic Naming detector."""
 
 import ast
+
 import pytest
+
 from aiguard.detectors.generic_naming import GenericNamingDetector
 
 

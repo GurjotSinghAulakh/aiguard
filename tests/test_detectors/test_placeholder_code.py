@@ -1,7 +1,9 @@
 """Tests for AIG007: Placeholder Code detector."""
 
 import ast
+
 import pytest
+
 from aiguard.detectors.placeholder_code import PlaceholderCodeDetector
 
 

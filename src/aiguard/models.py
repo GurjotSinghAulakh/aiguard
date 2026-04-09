@@ -4,7 +4,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Optional
 
 
 class Severity(Enum):
@@ -31,11 +30,11 @@ class Finding:
     message: str
     file_path: str
     line: int
-    end_line: Optional[int] = None
+    end_line: int | None = None
     column: int = 0
     severity: Severity = Severity.WARNING
     confidence: float = 1.0
-    suggestion: Optional[str] = None
+    suggestion: str | None = None
 
     def to_dict(self) -> dict:
         return {
@@ -84,7 +83,7 @@ class ScanReport:
     total_findings: int = 0
     findings_by_severity: dict[str, int] = field(default_factory=dict)
     findings_by_rule: dict[str, int] = field(default_factory=dict)
-    config_path: Optional[str] = None
+    config_path: str | None = None
 
     def to_dict(self) -> dict:
         return {

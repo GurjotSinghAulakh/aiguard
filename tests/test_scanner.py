@@ -1,7 +1,8 @@
 """Tests for the Scanner orchestrator."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 from aiguard.config import Config
 from aiguard.scanner import Scanner

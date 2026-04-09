@@ -116,7 +116,7 @@ def list_rules():
             f"{click.style(det.severity.value.upper(), fg=severity_color):>10s}  "
             f"{det.description}"
         )
-        langs = ", ".join(l.value for l in det.languages)
+        langs = ", ".join(lang.value for lang in det.languages)
         click.echo(f"           Languages: {langs}")
         click.echo()
 

@@ -1,7 +1,9 @@
 """Tests for AIG001: Shallow Error Handling detector."""
 
 import ast
+
 import pytest
+
 from aiguard.detectors.shallow_error_handling import ShallowErrorHandlingDetector
 from aiguard.models import Severity
 

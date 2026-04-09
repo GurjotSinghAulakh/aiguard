@@ -10,9 +10,9 @@ from aiguard.detectors import register
 from aiguard.detectors.base import BaseDetector
 from aiguard.models import Finding, Language, Severity
 
-
 # Python stdlib module names (3.10+)
-_STDLIB_MODULES: set[str] = set(sys.stdlib_module_names) if hasattr(sys, "stdlib_module_names") else {
+_STDLIB_MODULES: set[str] = (
+    set(sys.stdlib_module_names) if hasattr(sys, "stdlib_module_names") else {
     "abc", "aifc", "argparse", "array", "ast", "asynchat", "asyncio",
     "asyncore", "atexit", "audioop", "base64", "bdb", "binascii", "binhex",
     "bisect", "builtins", "bz2", "calendar", "cgi", "cgitb", "chunk",
@@ -47,6 +47,7 @@ _STDLIB_MODULES: set[str] = set(sys.stdlib_module_names) if hasattr(sys, "stdlib
     "wsgiref", "xdrlib", "xml", "xmlrpc", "zipapp", "zipfile",
     "zipimport", "zlib", "_thread",
 }
+)
 
 
 @register

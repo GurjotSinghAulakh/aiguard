@@ -1,8 +1,9 @@
 """Tests for the CLI interface."""
 
+from pathlib import Path
+
 import pytest
 from click.testing import CliRunner
-from pathlib import Path
 
 from aiguard.cli import cli
 
@@ -50,7 +51,7 @@ class TestScanCommand:
 
     def test_scan_output_to_file(self, runner, fixtures_dir, tmp_path):
         outfile = tmp_path / "results.json"
-        result = runner.invoke(
+        runner.invoke(
             cli,
             ["scan", str(fixtures_dir / "shallow_error.py"), "-f", "json", "-o", str(outfile)],
         )

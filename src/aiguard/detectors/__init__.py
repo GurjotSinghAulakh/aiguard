@@ -29,14 +29,14 @@ def get_detector(rule_id: str) -> type[BaseDetector] | None:
 def load_builtin_detectors() -> None:
     """Import all built-in detector modules to trigger registration."""
     from aiguard.detectors import (  # noqa: F401
+        complex_one_liners,
+        copy_paste_duplication,
+        generic_naming,
+        hallucinated_imports,
+        missing_input_validation,
+        over_commenting,
+        placeholder_code,
         shallow_error_handling,
         tautological_code,
-        over_commenting,
-        hallucinated_imports,
-        copy_paste_duplication,
-        missing_input_validation,
-        placeholder_code,
-        complex_one_liners,
         unused_variables,
-        generic_naming,
     )

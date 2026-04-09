@@ -1,9 +1,7 @@
 """Tests for configuration loading."""
 
-import pytest
-from pathlib import Path
 
-from aiguard.config import Config, RuleConfig
+from aiguard.config import Config
 
 
 class TestConfigDefault:

@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from aiguard.formatters.base import BaseFormatter
-from aiguard.formatters.terminal import TerminalFormatter
 from aiguard.formatters.json_fmt import JsonFormatter
 from aiguard.formatters.sarif import SarifFormatter
+from aiguard.formatters.terminal import TerminalFormatter
 
 _FORMATTERS: dict[str, type[BaseFormatter]] = {
     "terminal": TerminalFormatter,

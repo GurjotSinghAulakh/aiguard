@@ -49,8 +49,9 @@ Issues = "https://github.com/aiguard/aiguard/issues"
 packages = ["src/aiguard"]
 
 [tool.ruff]
-target-version = "py310"
+target-version = "py39"
 line-length = 100
+exclude = ["tests/fixtures/*"]
 
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "N", "UP"]

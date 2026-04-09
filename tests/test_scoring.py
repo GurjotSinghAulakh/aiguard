@@ -1,6 +1,5 @@
 """Tests for the scoring system."""
 
-import pytest
 
 from aiguard.models import Finding, Severity
 from aiguard.scoring import compute_score, severity_counts

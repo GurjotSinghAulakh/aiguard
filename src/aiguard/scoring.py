@@ -6,7 +6,7 @@ from collections import Counter
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from aiguard.models import Finding, ScanReport
+    from aiguard.models import Finding
 
 
 def compute_score(

@@ -9,7 +9,6 @@ if TYPE_CHECKING:
 
 from aiguard.models import Language
 
-
 _PARSERS: dict[Language, type[BaseParser]] = {}
 
 

@@ -1,6 +1,7 @@
 """Tests for output formatters."""
 
 import json
+
 import pytest
 
 from aiguard.formatters import get_formatter

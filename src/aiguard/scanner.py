@@ -4,16 +4,15 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Optional
 
 import pathspec
 
+import aiguard.parsers.python_parser  # noqa: F401 — triggers parser registration
 from aiguard.config import Config
 from aiguard.detectors import get_all_detectors, load_builtin_detectors
 from aiguard.detectors.base import BaseDetector
-from aiguard.models import FileReport, Finding, Language, ScanReport, Severity
+from aiguard.models import FileReport, Finding, ScanReport, Severity
 from aiguard.parsers import get_language_for_file, get_parser
-import aiguard.parsers.python_parser  # noqa: F401 — triggers parser registration
 from aiguard.plugins.loader import load_plugins
 from aiguard.scoring import compute_score, severity_counts
 
@@ -29,7 +28,7 @@ class Scanner:
         report = scanner.scan("./src")
     """
 
-    def __init__(self, config: Optional[Config] = None):
+    def __init__(self, config: Config | None = None):
         self.config = config or Config.default()
 
         # Load all detectors
@@ -142,7 +141,7 @@ class Scanner:
 
         return files
 
-    def _scan_file(self, file_path: Path) -> Optional[FileReport]:
+    def _scan_file(self, file_path: Path) -> FileReport | None:
         """Scan a single file with all applicable detectors."""
         language = get_language_for_file(str(file_path))
         if language is None:

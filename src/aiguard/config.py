@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import yaml
 
@@ -14,7 +14,7 @@ class RuleConfig:
     """Configuration for a single rule."""
 
     enabled: bool = True
-    severity: Optional[str] = None
+    severity: str | None = None
     options: dict[str, Any] = field(default_factory=dict)
 
 
@@ -48,7 +48,7 @@ class Config:
         )
 
     @classmethod
-    def load(cls, path: Optional[str] = None) -> Config:
+    def load(cls, path: str | None = None) -> Config:
         """Load configuration from a .aiguard.yml file.
 
         If no path is given, searches upward from cwd for .aiguard.yml.
@@ -64,7 +64,7 @@ class Config:
         return cls._parse(raw)
 
     @classmethod
-    def _find_config(cls, path: Optional[str] = None) -> Optional[Path]:
+    def _find_config(cls, path: str | None = None) -> Path | None:
         """Find the configuration file."""
         if path:
             p = Path(path)
@@ -122,7 +122,7 @@ class Config:
             return self.rules[rule_id].enabled
         return True  # Enabled by default
 
-    def get_rule_severity(self, rule_id: str) -> Optional[str]:
+    def get_rule_severity(self, rule_id: str) -> str | None:
         """Get severity override for a rule."""
         if rule_id in self.rules:
             return self.rules[rule_id].severity

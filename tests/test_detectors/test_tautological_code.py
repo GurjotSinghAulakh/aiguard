@@ -1,7 +1,9 @@
 """Tests for AIG002: Tautological Code detector."""
 
 import ast
+
 import pytest
+
 from aiguard.detectors.tautological_code import TautologicalCodeDetector
 
 

@@ -5,9 +5,9 @@ Detect common failure patterns in AI-generated code.
 
 __version__ = "0.1.0"
 
-from aiguard.models import Finding, FileReport, ScanReport, Severity, Language
-from aiguard.scanner import Scanner
 from aiguard.config import Config
+from aiguard.models import FileReport, Finding, Language, ScanReport, Severity
+from aiguard.scanner import Scanner
 
 __all__ = [
     "Finding",

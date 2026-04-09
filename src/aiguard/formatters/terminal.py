@@ -8,11 +8,9 @@ from pathlib import Path
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
 
 from aiguard.formatters.base import BaseFormatter
 from aiguard.models import ScanReport, Severity
-
 
 SEVERITY_STYLES = {
     Severity.ERROR: ("bold red", "E"),
