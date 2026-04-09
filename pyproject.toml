@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "aiguard"
-version = "0.1.0"
+name = "ai-guard-cli"
+version = "0.2.0"
 description = "AI Code Quality Guard — detect common failure patterns in AI-generated code"
 readme = "README.md"
 license = "MIT"
@@ -34,7 +34,7 @@ js = ["tree-sitter>=0.21", "tree-sitter-javascript>=0.21"]
 dev = ["pytest>=7.0", "pytest-cov", "ruff"]
 
 [project.scripts]
-aiguard = "aiguard.cli:cli"
+ai-guard = "aiguard.cli:cli"
 
 [project.entry-points."aiguard.detectors"]
 # This group is for third-party plugins.
