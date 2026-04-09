@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/pypi/pyversions/aiguard)](https://pypi.org/project/aiguard/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-AI-generated code is **"almost right"** — it compiles, passes linting, follows conventions... but has subtle bugs that are harder to find than writing it yourself. **66% of developers** say this is their #1 frustration with AI coding tools.
+AI-generated code is **"almost right"** - it compiles, passes linting, follows conventions... but has subtle bugs that are harder to find than writing it yourself. **66% of developers** say this is their #1 frustration with AI coding tools.
 
 AIGuard is a static analysis tool that catches the **specific patterns where AI-generated code goes wrong**: shallow error handling, hallucinated imports, copy-paste duplication, missing validation, placeholder code disguised as complete, and more.
 
