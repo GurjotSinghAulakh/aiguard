@@ -5,6 +5,39 @@ All notable changes to AIGuard will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2026-04-10
+
+### Added
+
+- **Inline suppression comments** — silence findings with `# aiguard: ignore AIG001` (Python) or `<!-- aiguard: ignore -->` (Markdown)
+- **Auto-fix mode** — `aiguard scan --fix` automatically fixes issues:
+  - AIG001: `except:` to `except Exception:`
+  - AIG003: Removes trivially redundant comments
+  - AIG007: `pass` to `raise NotImplementedError`
+  - AIG009: Prefixes unused variables with `_`
+  - AIG014: `chmod 777` to `chmod 755`, comments out dangerous commands
+- **4 new security detectors** (18 total rules):
+  - AIG015: Hardcoded secrets (API keys, tokens, passwords, AWS/Stripe/GitHub/OpenAI formats)
+  - AIG016: Insecure defaults (debug=True, verify=False, eval(), pickle.loads(), yaml.load())
+  - AIG017: SQL injection (f-string, .format(), % formatting, concatenation in queries)
+  - AIG018: Async anti-patterns (blocking calls in async functions, missing await)
+- **Enhanced GitHub Action** — supports `--fix`, `--diff`, SARIF upload, score/findings outputs
+- 78 new tests (232 total)
+
+## [0.4.0] - 2026-04-10
+
+### Added
+
+- **Prompt Security Scanner** — 4 new detectors that scan `.md` and `.mdx` files for hidden malicious content:
+  - AIG011: Prompt injection (override instructions, role hijacking, stealth commands)
+  - AIG012: Hidden content (zero-width Unicode, invisible HTML, base64 payloads)
+  - AIG013: Data exfiltration (credential theft, sensitive file access, data piping)
+  - AIG014: Dangerous commands (rm -rf, curl|bash, reverse shells, privilege escalation)
+- **Markdown language support** — new `MarkdownParser` that extracts code blocks, HTML comments, and links
+- `.md` and `.mdx` file extension scanning
+- `aiguard-prompt-scan` pre-commit hook for markdown files
+- 59 new tests (133 total)
+
 ## [0.3.0] - 2026-04-09
 
 ### Added

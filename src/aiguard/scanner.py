@@ -12,10 +12,12 @@ import aiguard.parsers.python_parser  # noqa: F401 — triggers parser registrat
 from aiguard.config import Config
 from aiguard.detectors import get_all_detectors, load_builtin_detectors
 from aiguard.detectors.base import BaseDetector
+from aiguard.fixers import get_fixer
 from aiguard.models import FileReport, Finding, ScanReport, Severity
 from aiguard.parsers import get_language_for_file, get_parser
 from aiguard.plugins.loader import load_plugins
 from aiguard.scoring import compute_score, severity_counts
+from aiguard.suppression import is_suppressed, parse_suppressions
 
 logger = logging.getLogger("aiguard")
 
@@ -63,6 +65,7 @@ class Scanner:
         target: str,
         diff_target: str | None = None,
         diff_staged: bool = False,
+        fix: bool = False,
     ) -> ScanReport:
         """Scan a file or directory and return a full report.
 
@@ -111,7 +114,7 @@ class Scanner:
         total_lines = 0
 
         for file_path in files:
-            report = self._scan_file(file_path)
+            report = self._scan_file(file_path, fix=fix)
             if report:
                 # In diff mode, filter findings to only changed lines
                 if changed_regions is not None:
@@ -179,7 +182,7 @@ class Scanner:
 
         return files
 
-    def _scan_file(self, file_path: Path) -> FileReport | None:
+    def _scan_file(self, file_path: Path, fix: bool = False) -> FileReport | None:
         """Scan a single file with all applicable detectors."""
         language = get_language_for_file(str(file_path))
         if language is None:
@@ -202,6 +205,9 @@ class Scanner:
             logger.warning(f"Parse error in {file_path}: {e}")
             return None
 
+        # Parse inline suppression comments
+        suppressions = parse_suppressions(source)
+
         # Run applicable detectors
         findings: list[Finding] = []
         for detector in self.detectors:
@@ -215,9 +221,70 @@ class Scanner:
                     f"Detector {detector.rule_id} failed on {file_path}: {e}"
                 )
 
+        # Filter out suppressed findings
+        if suppressions:
+            findings = [
+                f for f in findings
+                if not is_suppressed(f.line, f.rule_id, suppressions)
+            ]
+
+        # Auto-fix mode: apply fixes and remove fixed findings
+        if fix:
+            fixed_findings, source = self._apply_fixes(
+                findings, source, file_path
+            )
+            if fixed_findings:
+                # Write the fixed source back to disk
+                try:
+                    file_path.write_text(source, encoding="utf-8")
+                    logger.info(
+                        f"Fixed {len(fixed_findings)} issue(s) in {file_path}"
+                    )
+                except OSError as e:
+                    logger.warning(f"Could not write fixes to {file_path}: {e}")
+                # Remove fixed findings from report
+                fixed_set = set(id(f) for f in fixed_findings)
+                findings = [f for f in findings if id(f) not in fixed_set]
+
         return FileReport(
             file_path=str(file_path),
             language=language,
             findings=sorted(findings, key=lambda f: f.line),
             lines_scanned=len(source.splitlines()),
         )
+
+    def _apply_fixes(
+        self,
+        findings: list[Finding],
+        source: str,
+        file_path: Path,
+    ) -> tuple[list[Finding], str]:
+        """Apply auto-fixes for findings that have registered fixers.
+
+        Applies fixes from bottom to top (highest line first) so that
+        line numbers remain stable as we modify the source.
+
+        Returns:
+            Tuple of (fixed_findings, modified_source).
+        """
+        # Sort findings by line descending so fixes don't shift line numbers
+        fixable = []
+        for f in sorted(findings, key=lambda f: f.line, reverse=True):
+            fixer = get_fixer(f.rule_id)
+            if fixer is not None:
+                fixable.append((f, fixer))
+
+        fixed: list[Finding] = []
+        for finding, fixer in fixable:
+            try:
+                new_source = fixer(source, finding.line)
+                if new_source != source:
+                    source = new_source
+                    fixed.append(finding)
+            except Exception as e:
+                logger.warning(
+                    f"Fixer for {finding.rule_id} failed on "
+                    f"{file_path}:{finding.line}: {e}"
+                )
+
+        return fixed, source

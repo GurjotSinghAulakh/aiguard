@@ -69,9 +69,15 @@ def cli():
     default=False,
     help="Only scan staged changes (for pre-commit hooks).",
 )
+@click.option(
+    "--fix",
+    is_flag=True,
+    default=False,
+    help="Automatically fix issues where possible.",
+)
 def scan(path: str, output_format: str, config_path: str | None,
          fail_under: int | None, output: str | None, quiet: bool,
-         diff_target: str | None, staged: bool):
+         diff_target: str | None, staged: bool, fix: bool):
     """Scan files for AI-generated code quality issues.
 
     PATH can be a file or directory (default: current directory).
@@ -92,7 +98,9 @@ def scan(path: str, output_format: str, config_path: str | None,
 
     # Run scan
     scanner = Scanner(config)
-    report = scanner.scan(path, diff_target=diff_target, diff_staged=staged)
+    report = scanner.scan(
+        path, diff_target=diff_target, diff_staged=staged, fix=fix
+    )
 
     if quiet:
         click.echo(report.score)

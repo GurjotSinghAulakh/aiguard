@@ -179,6 +179,18 @@ rules:
   AIG014:  # Dangerous commands
     enabled: true
     severity: error
+  AIG015:  # Hardcoded secrets
+    enabled: true
+    severity: error
+  AIG016:  # Insecure defaults
+    enabled: true
+    severity: error
+  AIG017:  # SQL injection
+    enabled: true
+    severity: error
+  AIG018:  # Async anti-patterns
+    enabled: true
+    severity: warning
 
 # File patterns to ignore (glob syntax)
 ignore:

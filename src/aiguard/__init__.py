@@ -3,7 +3,7 @@
 Detect common failure patterns in AI-generated code.
 """
 
-__version__ = "0.4.0"
+__version__ = "0.5.0"
 
 from aiguard.config import Config
 from aiguard.models import FileReport, Finding, Language, ScanReport, Severity

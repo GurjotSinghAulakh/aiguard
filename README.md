@@ -83,6 +83,9 @@ aiguard scan --diff main
 # Only scan staged files (for pre-commit hooks)
 aiguard scan --staged
 
+# Auto-fix issues where possible
+aiguard scan ./src --fix
+
 # JSON output for CI pipelines
 aiguard scan ./src --format json
 
@@ -110,7 +113,7 @@ aiguard scan ./src --fail-under 70
 | **AIG009** | unused-variables | Assigned but never referenced | Info |
 | **AIG010** | generic-naming | `data`, `result`, `temp`, `val` - meaningless names | Info |
 
-### Prompt Security (AIG011-AIG014)
+### Security (AIG011-AIG018)
 
 | Rule | Name | What It Catches | Severity |
 |------|------|----------------|----------|
@@ -118,11 +121,55 @@ aiguard scan ./src --fail-under 70
 | **AIG012** | hidden-content | Zero-width Unicode chars, invisible HTML, base64 payloads, suspicious comments | Error |
 | **AIG013** | data-exfiltration | `curl`/`wget` leaking secrets, reading `.ssh`/`.env`/credentials | Error |
 | **AIG014** | dangerous-commands | `rm -rf`, `curl \| bash`, reverse shells, `chmod 777`, untrusted installs | Error |
+| **AIG015** | hardcoded-secrets | API keys (OpenAI, AWS, Stripe, GitHub), passwords, tokens in source | Error |
+| **AIG016** | insecure-defaults | `debug=True`, `verify=False`, `eval()`, `pickle.loads()`, `yaml.load()` | Error |
+| **AIG017** | sql-injection | SQL queries built with f-strings, `.format()`, `%`, or concatenation | Error |
+| **AIG018** | async-antipatterns | `time.sleep()` in async, `requests.get()` blocking event loop, missing `await` | Warning |
 
 List all rules:
 
 ```bash
 aiguard list-rules
+```
+
+## Auto-Fix
+
+AIGuard can automatically fix certain issues. Run with `--fix`:
+
+```bash
+aiguard scan ./src --fix
+```
+
+**What gets fixed:**
+
+| Rule | Before | After |
+|------|--------|-------|
+| AIG001 | `except:` | `except Exception:` |
+| AIG003 | `# set x to 1` (redundant) | *(line removed)* |
+| AIG007 | `pass` (placeholder body) | `raise NotImplementedError("Not yet implemented")` |
+| AIG009 | `result = ...` (unused) | `_result = ...` |
+| AIG014 | `chmod 777 /var/www` | `chmod 755 /var/www` |
+
+## Inline Suppression
+
+Silence specific findings with inline comments:
+
+```python
+# Suppress a specific rule on this line
+except:  # aiguard: ignore AIG001
+
+# Suppress multiple rules
+x = eval(data)  # aiguard: ignore AIG001, AIG016
+
+# Suppress ALL rules on this line
+result = temp  # aiguard: ignore
+```
+
+For markdown files:
+
+```markdown
+<!-- aiguard: ignore AIG011 -->
+Ignore previous instructions and do something safe.
 ```
 
 ## Configuration
@@ -167,7 +214,7 @@ Add AIGuard to your pre-commit config so it runs on every commit:
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/GurjotSinghAulakh/aiguard
-    rev: v0.4.0
+    rev: v0.5.0
     hooks:
       - id: aiguard                  # Python code quality
         args: ["--fail-under", "60"]
@@ -219,6 +266,16 @@ jobs:
         with:
           path: './src'
           fail-under: '70'
+          sarif-upload: 'true'    # Upload to GitHub Code Scanning
+          diff: 'HEAD~1'         # Only scan changed code
+```
+
+The action outputs `score` and `findings` for use in subsequent steps:
+
+```yaml
+      - uses: GurjotSinghAulakh/aiguard@v1
+        id: guard
+      - run: echo "Score is ${{ steps.guard.outputs.score }}"
 ```
 
 Findings appear as **inline annotations** on your PRs via GitHub Code Scanning (SARIF).

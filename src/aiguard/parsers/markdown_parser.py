@@ -52,7 +52,7 @@ class MarkdownDocument:
 
 _FENCE_OPEN = re.compile(r"^(`{3,}|~{3,})(\w*)")
 _HTML_COMMENT_START = re.compile(r"<!--")
-_HTML_COMMENT_END = re.compile(r"-->")
+_HTML_COMMENT_END = re.compile(r"--!?>")
 _MD_LINK = re.compile(r"\[([^\]]*)\]\(([^)]+)\)")
 _BARE_URL = re.compile(r"https?://\S+")
 
@@ -129,7 +129,7 @@ class MarkdownParser(BaseParser):
                         content = re.sub(
                             r".*?<!--\s*", "", line
                         )
-                        content = re.sub(r"\s*-->.*", "", content)
+                        content = re.sub(r"\s*--!?>.*", "", content)
                         doc.html_comments.append(
                             HtmlComment(
                                 content=content,
@@ -143,7 +143,7 @@ class MarkdownParser(BaseParser):
                         comment_lines = [content]
             else:
                 if _HTML_COMMENT_END.search(line):
-                    content = re.sub(r"\s*-->.*", "", line)
+                    content = re.sub(r"\s*--!?>.*", "", line)
                     comment_lines.append(content)
                     doc.html_comments.append(
                         HtmlComment(

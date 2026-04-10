@@ -1,27 +1,50 @@
-name: 'AIGuard - AI Code Quality Guard'
-description: 'Scan for AI-generated code quality issues and report findings in GitHub Code Scanning'
-author: 'AIGuard Contributors'
+name: "AIGuard — AI Code Quality Scanner"
+description: "Scan AI-generated code for quality issues, prompt injection, and security vulnerabilities. Supports SARIF upload, auto-fix, and diff mode."
+author: "Gurjot Singh Aulakh"
 
 branding:
-  icon: 'shield'
-  color: 'blue'
+  icon: "shield"
+  color: "blue"
 
 inputs:
   path:
-    description: 'Path to scan (file or directory)'
-    default: '.'
-  config:
-    description: 'Path to .aiguard.yml config file'
-    required: false
+    description: "Path to scan (file or directory)"
+    default: "."
   fail-under:
-    description: 'Minimum score to pass (0-100). Exits non-zero if below.'
-    default: '60'
+    description: "Minimum score to pass (0-100). Exits non-zero if below."
+    default: "60"
+  format:
+    description: "Output format: terminal, json, or sarif"
+    default: "terminal"
+  config:
+    description: "Path to .aiguard.yml config file"
+    required: false
+  diff:
+    description: "Only scan changes vs a git ref (e.g. HEAD~1, main)"
+    required: false
+  fix:
+    description: "Auto-fix issues where possible (true/false)"
+    default: "false"
+  version:
+    description: "AIGuard version to install (e.g. 0.4.0). Blank for latest."
+    default: ""
+  sarif-upload:
+    description: "Upload SARIF results to GitHub Code Scanning (true/false)"
+    default: "true"
   python-version:
-    description: 'Python version to use'
-    default: '3.11'
+    description: "Python version to use"
+    default: "3.11"
+
+outputs:
+  score:
+    description: "The AI Code Health Score (0-100)"
+    value: ${{ steps.score.outputs.score }}
+  findings:
+    description: "Total number of findings"
+    value: ${{ steps.score.outputs.findings }}
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Set up Python
       uses: actions/setup-python@v5
@@ -29,31 +52,80 @@ runs:
         python-version: ${{ inputs.python-version }}
 
     - name: Install AIGuard
-      run: pip install ai-guard-cli
       shell: bash
-
-    - name: Run AIGuard scan
       run: |
-        aiguard scan "${{ inputs.path }}" \
-          --format sarif \
-          --output aiguard-results.sarif \
-          --fail-under "${{ inputs.fail-under }}" \
-          ${{ inputs.config && format('--config {0}', inputs.config) || '' }}
+        if [ -n "${{ inputs.version }}" ]; then
+          pip install ai-guard-cli==${{ inputs.version }}
+        else
+          pip install ai-guard-cli
+        fi
+
+    - name: Capture score and findings count
+      id: score
       shell: bash
-      continue-on-error: true
+      run: |
+        OPTS=""
+        if [ -n "${{ inputs.config }}" ]; then
+          OPTS="$OPTS --config ${{ inputs.config }}"
+        fi
+        if [ -n "${{ inputs.diff }}" ]; then
+          OPTS="$OPTS --diff ${{ inputs.diff }}"
+        fi
+
+        SCORE=$(aiguard scan "${{ inputs.path }}" --quiet $OPTS 2>/dev/null || echo "0")
+        echo "score=$SCORE" >> $GITHUB_OUTPUT
+
+        FINDINGS=$(aiguard scan "${{ inputs.path }}" --format json $OPTS 2>/dev/null | python3 -c "
+        import json, sys
+        try:
+            data = json.load(sys.stdin)
+            print(data.get('total_findings', 0))
+        except Exception:
+            print(0)
+        " 2>/dev/null || echo "0")
+        echo "findings=$FINDINGS" >> $GITHUB_OUTPUT
+
+    - name: Auto-fix (if enabled)
+      if: inputs.fix == 'true'
+      shell: bash
+      run: |
+        OPTS="--fix"
+        if [ -n "${{ inputs.config }}" ]; then
+          OPTS="$OPTS --config ${{ inputs.config }}"
+        fi
+        aiguard scan "${{ inputs.path }}" $OPTS || true
+
+    - name: Generate SARIF report
+      if: inputs.sarif-upload == 'true'
+      shell: bash
+      run: |
+        OPTS="--format sarif --output aiguard-results.sarif"
+        if [ -n "${{ inputs.config }}" ]; then
+          OPTS="$OPTS --config ${{ inputs.config }}"
+        fi
+        if [ -n "${{ inputs.diff }}" ]; then
+          OPTS="$OPTS --diff ${{ inputs.diff }}"
+        fi
+        aiguard scan "${{ inputs.path }}" $OPTS || true
 
     - name: Upload SARIF to GitHub Code Scanning
+      if: inputs.sarif-upload == 'true' && always()
       uses: github/codeql-action/upload-sarif@v3
       with:
         sarif_file: aiguard-results.sarif
-      if: always()
+        category: aiguard
 
-    - name: Check score threshold
-      run: |
-        SCORE=$(aiguard scan "${{ inputs.path }}" --quiet ${{ inputs.config && format('--config {0}', inputs.config) || '' }})
-        echo "AIGuard Score: $SCORE/100"
-        if [ "$SCORE" -lt "${{ inputs.fail-under }}" ]; then
-          echo "::error::AIGuard score $SCORE is below threshold ${{ inputs.fail-under }}"
-          exit 1
-        fi
+    - name: Run AIGuard scan
       shell: bash
+      run: |
+        OPTS="--format ${{ inputs.format }} --fail-under ${{ inputs.fail-under }}"
+        if [ -n "${{ inputs.config }}" ]; then
+          OPTS="$OPTS --config ${{ inputs.config }}"
+        fi
+        if [ -n "${{ inputs.diff }}" ]; then
+          OPTS="$OPTS --diff ${{ inputs.diff }}"
+        fi
+
+        echo "::group::AIGuard Scan Results (Score: ${{ steps.score.outputs.score }}/100)"
+        aiguard scan "${{ inputs.path }}" $OPTS
+        echo "::endgroup::"
