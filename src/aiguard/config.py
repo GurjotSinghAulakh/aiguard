@@ -167,6 +167,18 @@ rules:
     enabled: true
   AIG010:  # Generic naming
     enabled: true
+  AIG011:  # Prompt injection
+    enabled: true
+    severity: error
+  AIG012:  # Hidden content
+    enabled: true
+    severity: error
+  AIG013:  # Data exfiltration
+    enabled: true
+    severity: error
+  AIG014:  # Dangerous commands
+    enabled: true
+    severity: error
 
 # File patterns to ignore (glob syntax)
 ignore:

@@ -1,6 +1,6 @@
 # AIGuard
 
-**AI Code Quality Guard — catch the bugs AI leaves behind.**
+**AI Code Quality Guard - catch the bugs AI leaves behind.**
 
 [![CI](https://github.com/GurjotSinghAulakh/aiguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GurjotSinghAulakh/aiguard/actions/workflows/ci.yml)
 [![PyPI](https://img.shields.io/pypi/v/aiguard)](https://pypi.org/project/aiguard/)
@@ -10,7 +10,7 @@
 
 AI-generated code is **"almost right"** - it compiles, passes linting, follows conventions... but has subtle bugs that are harder to find than writing it yourself. **66% of developers** say this is their #1 frustration with AI coding tools.
 
-AIGuard is a static analysis tool that catches the **specific patterns where AI-generated code goes wrong**: shallow error handling, hallucinated imports, copy-paste duplication, missing validation, placeholder code disguised as complete, and more.
+AIGuard is a static analysis tool that catches the **specific patterns where AI-generated code goes wrong**: shallow error handling, hallucinated imports, copy-paste duplication, missing validation, placeholder code disguised as complete - and now **malicious content hidden in AI agent prompts and skill files**.
 
 <p align="center">
   <img src="demo.gif" alt="AIGuard demo" width="800">
@@ -25,13 +25,36 @@ src/api/handlers.py
   W       67  Public function 'process' has 4 params but no input validation     AIG006
 
 src/utils/helpers.py
-  I       5   Variable 'data' is too generic — use a descriptive name            AIG010
-  W       22  Function 'transform' has only 'pass' — placeholder code            AIG007
+  I       5   Variable 'data' is too generic - use a descriptive name            AIG010
+  W       22  Function 'transform' has only 'pass' - placeholder code            AIG007
 
   ┌─────────────────── AI Code Health Score ───────────────────┐
   │  ████████████████████████████░░░░░░░░░░░░  72/100  ~       │
   └────────────────────────────────────────────────────────────┘
 ```
+
+## Prompt Security Scanner (NEW)
+
+People blindly trust AI agent prompts, skills, and `.md` config files - but they can contain **hidden malicious instructions**. AIGuard now scans markdown files for threats that are invisible to human reviewers.
+
+<p align="center">
+  <img src="demo-prompt-scan.gif" alt="AIGuard Prompt Security Scanner demo" width="800">
+</p>
+
+```bash
+# Scan a prompt/skill file for hidden threats
+aiguard scan agent-instructions.md
+
+# Scan all markdown files in a directory
+aiguard scan ./prompts/
+```
+
+**What it catches:**
+
+- **Prompt injection** - "ignore previous instructions", role hijacking, stealth commands
+- **Hidden content** - zero-width Unicode characters, invisible HTML (`display:none`), base64-encoded payloads
+- **Data exfiltration** - `curl` sending secrets, reading `.ssh`/`.env`/credentials, leaking `$API_KEY`
+- **Dangerous commands** - `rm -rf`, `curl | bash`, reverse shells, `chmod 777`, untrusted package installs
 
 ### Installation / Package Name
 
@@ -72,6 +95,8 @@ aiguard scan ./src --fail-under 70
 
 ## Detection Rules
 
+### Python Code Quality (AIG001-AIG010)
+
 | Rule | Name | What It Catches | Severity |
 |------|------|----------------|----------|
 | **AIG001** | shallow-error-handling | Bare `except:`, catching `Exception`, empty handlers | Error |
@@ -83,7 +108,16 @@ aiguard scan ./src --fail-under 70
 | **AIG007** | placeholder-code | `pass`/`...`/`NotImplementedError` disguised as done | Warning |
 | **AIG008** | complex-one-liners | Nested comprehensions, chained ternaries | Warning |
 | **AIG009** | unused-variables | Assigned but never referenced | Info |
-| **AIG010** | generic-naming | `data`, `result`, `temp`, `val` — meaningless names | Info |
+| **AIG010** | generic-naming | `data`, `result`, `temp`, `val` - meaningless names | Info |
+
+### Prompt Security (AIG011-AIG014)
+
+| Rule | Name | What It Catches | Severity |
+|------|------|----------------|----------|
+| **AIG011** | prompt-injection | "Ignore previous instructions", role hijacking, stealth commands | Error |
+| **AIG012** | hidden-content | Zero-width Unicode chars, invisible HTML, base64 payloads, suspicious comments | Error |
+| **AIG013** | data-exfiltration | `curl`/`wget` leaking secrets, reading `.ssh`/`.env`/credentials | Error |
+| **AIG014** | dangerous-commands | `rm -rf`, `curl \| bash`, reverse shells, `chmod 777`, untrusted installs | Error |
 
 List all rules:
 
@@ -133,10 +167,12 @@ Add AIGuard to your pre-commit config so it runs on every commit:
 # .pre-commit-config.yaml
 repos:
   - repo: https://github.com/GurjotSinghAulakh/aiguard
-    rev: v0.3.0
+    rev: v0.4.0
     hooks:
-      - id: aiguard
+      - id: aiguard                  # Python code quality
         args: ["--fail-under", "60"]
+      - id: aiguard-prompt-scan      # Prompt/markdown security
+        args: ["--fail-under", "80"]
 ```
 
 Then install:
@@ -146,11 +182,11 @@ pip install pre-commit
 pre-commit install
 ```
 
-Now AIGuard runs automatically on every `git commit`, scanning only the files you changed.
+Now AIGuard runs automatically on every `git commit` - scanning Python code for quality issues **and** markdown files for hidden threats.
 
 ## Diff Mode (Only Scan New Code)
 
-The killer feature for existing projects — only flag issues in **new or changed code**, not the entire codebase:
+The killer feature for existing projects - only flag issues in **new or changed code**, not the entire codebase:
 
 ```bash
 # Issues introduced since last commit

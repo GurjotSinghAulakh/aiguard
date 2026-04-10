@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pathspec
 
+import aiguard.parsers.markdown_parser  # noqa: F401 — triggers parser registration
 import aiguard.parsers.python_parser  # noqa: F401 — triggers parser registration
 from aiguard.config import Config
 from aiguard.detectors import get_all_detectors, load_builtin_detectors

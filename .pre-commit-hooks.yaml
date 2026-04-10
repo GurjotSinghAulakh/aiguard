@@ -7,3 +7,13 @@
   args: ["--fail-under", "60"]
   require_serial: true
   additional_dependencies: []
+
+- id: aiguard-prompt-scan
+  name: AIGuard Prompt Scanner — Detect malicious content in AI prompt files
+  description: Scan markdown files for prompt injection, hidden content, data exfiltration, and dangerous commands
+  entry: aiguard scan
+  language: python
+  types: [markdown]
+  args: ["--fail-under", "80"]
+  require_serial: true
+  additional_dependencies: []

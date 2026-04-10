@@ -19,6 +19,7 @@ class Language(Enum):
 
     PYTHON = "python"
     JAVASCRIPT = "javascript"
+    MARKDOWN = "markdown"
 
 
 @dataclass(frozen=True)

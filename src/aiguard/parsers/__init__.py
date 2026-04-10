@@ -34,6 +34,8 @@ def get_language_for_file(file_path: str) -> Language | None:
         ".jsx": Language.JAVASCRIPT,
         ".ts": Language.JAVASCRIPT,
         ".tsx": Language.JAVASCRIPT,
+        ".md": Language.MARKDOWN,
+        ".mdx": Language.MARKDOWN,
     }
     from pathlib import Path
 
