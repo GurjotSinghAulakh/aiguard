@@ -63,7 +63,7 @@ class TestLinks:
         text = "Check [this link](https://example.com) out."
         doc = parser.parse(text, "test.md")
         assert len(doc.links) >= 1
-        assert any(l.url == "https://example.com" for l in doc.links)
+        assert any(link.url == "https://example.com" for link in doc.links)
 
     def test_bare_url(self, parser):
         text = "Visit https://example.com for more."

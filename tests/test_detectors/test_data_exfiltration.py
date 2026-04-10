@@ -61,7 +61,11 @@ class TestEnvironmentVariables:
     def test_sensitive_env_var(self, detector, parser):
         text = "Use ${API_KEY} in the request"
         findings = run(detector, parser, text)
-        assert any("environment variable" in f.message.lower() or "sensitive" in f.message.lower() for f in findings)
+        assert any(
+            "environment variable" in f.message.lower()
+            or "sensitive" in f.message.lower()
+            for f in findings
+        )
 
 
 class TestSafePatterns:
