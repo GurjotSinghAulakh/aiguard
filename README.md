@@ -3,8 +3,8 @@
 **AI Code Quality Guard - catch the bugs AI leaves behind.**
 
 [![CI](https://github.com/GurjotSinghAulakh/aiguard/actions/workflows/ci.yml/badge.svg)](https://github.com/GurjotSinghAulakh/aiguard/actions/workflows/ci.yml)
-[![PyPI](https://img.shields.io/pypi/v/aiguard)](https://pypi.org/project/aiguard/)
-[![Python](https://img.shields.io/pypi/pyversions/aiguard)](https://pypi.org/project/aiguard/)
+[![PyPI](https://img.shields.io/pypi/v/ai-guard-cli)](https://pypi.org/project/ai-guard-cli/)
+[![Python](https://img.shields.io/pypi/pyversions/ai-guard-cli)](https://pypi.org/project/ai-guard-cli/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 ![Release](https://img.shields.io/github/v/release/GurjotSinghAulakh/aiguard)
 
