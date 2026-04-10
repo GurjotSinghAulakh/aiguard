@@ -30,12 +30,13 @@ def get_language_for_file(file_path: str) -> Language | None:
     ext_map = {
         ".py": Language.PYTHON,
         ".pyi": Language.PYTHON,
-        ".js": Language.JAVASCRIPT,
-        ".jsx": Language.JAVASCRIPT,
-        ".ts": Language.JAVASCRIPT,
-        ".tsx": Language.JAVASCRIPT,
         ".md": Language.MARKDOWN,
         ".mdx": Language.MARKDOWN,
+        # JavaScript support coming soon:
+        # ".js": Language.JAVASCRIPT,
+        # ".jsx": Language.JAVASCRIPT,
+        # ".ts": Language.JAVASCRIPT,
+        # ".tsx": Language.JAVASCRIPT,
     }
     from pathlib import Path
 

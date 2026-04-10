@@ -6,7 +6,7 @@ Thank you for your interest in contributing to AIGuard! This guide will help you
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.9 or higher
 - Git
 
 ### Development Setup
@@ -82,6 +82,52 @@ Then:
 1. Add your module import to `src/aiguard/detectors/__init__.py` in `load_builtin_detectors()`
 2. Create a test fixture in `tests/fixtures/`
 3. Create tests in `tests/test_detectors/`
+
+### Writing a Prompt Security Detector
+
+Prompt security detectors scan `.md` files instead of Python code. They use `Language.MARKDOWN` and receive a `MarkdownDocument` as the AST:
+
+```python
+# src/aiguard/detectors/my_prompt_detector.py
+
+from aiguard.detectors import register
+from aiguard.detectors.base import BaseDetector
+from aiguard.models import Finding, Language, Severity
+
+
+@register
+class MyPromptDetector(BaseDetector):
+    rule_id = "AIG0XX"
+    rule_name = "my-prompt-rule"
+    description = "What it detects in prompt files"
+    severity = Severity.ERROR
+    languages = (Language.MARKDOWN,)
+
+    def detect(self, source, ast_tree, file_path):
+        findings = []
+        lines = source.splitlines()
+
+        # Scan raw text line by line
+        for i, line in enumerate(lines, start=1):
+            if "suspicious_pattern" in line:
+                findings.append(self._make_finding(
+                    message="Found suspicious pattern",
+                    file_path=file_path,
+                    line=i,
+                ))
+
+        # Access parsed structure via ast_tree (MarkdownDocument)
+        from aiguard.parsers.markdown_parser import MarkdownDocument
+        if isinstance(ast_tree, MarkdownDocument):
+            for block in ast_tree.code_blocks:
+                pass  # Check code blocks
+            for comment in ast_tree.html_comments:
+                pass  # Check HTML comments
+
+        return findings
+```
+
+For test fixtures, create `.md` files in `tests/fixtures/` with both malicious and safe examples. See `tests/fixtures/malicious_prompt.md` and `tests/fixtures/safe_prompt.md` for reference.
 
 ### Commit Message Convention
 
